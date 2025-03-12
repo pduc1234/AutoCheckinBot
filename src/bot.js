@@ -31,12 +31,12 @@ const urlDict = {
     Honkai_3: "https://sg-public-api.hoyolab.com/event/mani/sign?lang=en-us&act_id=e202110291205111"
 };
 
-// Hàm tạo khóa từ SECRET_KEY
+// The locking function from SECRET_KEY
 function getKeyFromSecret(secret) {
     return crypto.createHash('sha256').update(secret).digest();
 }
 
-// Hàm mã hóa
+// Encrypt function
 function encrypt(text) {
     const key = getKeyFromSecret(SECRET_KEY);
     const iv = crypto.randomBytes(16);
@@ -48,7 +48,7 @@ function encrypt(text) {
     return iv.toString('hex') + encrypted; 
 }
 
-// Hàm giải mã
+// Decrypt function
 function decrypt(encrypted) {
     if (!encrypted) return null;
 
@@ -82,7 +82,7 @@ function saveUserData(data) {
 const userProfiles = loadUserData();
 
 client.on("ready", () => {
-    console.log(`✅ Bot đã hoạt động: ${client.user.tag}`);
+    console.log(`✅ Bot is ready: ${client.user.tag}`);
 });
 
 client.on("interactionCreate", async (interaction) => {
@@ -90,14 +90,14 @@ client.on("interactionCreate", async (interaction) => {
     const { commandName } = interaction;
 
     if (commandName === "hello") {
-        await interaction.reply({ content: `Xin chào, ${interaction.user.username}! 👋`, flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: `Hello, ${interaction.user.username}! 👋`, flags: MessageFlags.Ephemeral });
     }
 
     if (commandName === "settoken") {
         const tokenValue = interaction.options.getString("value");
     
         if (!tokenValue) {
-            await interaction.reply({ content: "⚠️ Vui lòng nhập token hợp lệ!", flags: MessageFlags.Ephemeral });
+            await interaction.reply({ content: "⚠️ Please enter a valid token!", flags: MessageFlags.Ephemeral });
             return;
         }
     
@@ -105,14 +105,14 @@ client.on("interactionCreate", async (interaction) => {
         userProfiles[interaction.user.id].token = encrypt(tokenValue);
         saveUserData(userProfiles);
     
-        await interaction.reply({ content: "✅ Token đã được lưu!", flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: "✅ Token saved!", flags: MessageFlags.Ephemeral });
     }
 
     if (commandName === "setuid") {
         const uidValue = interaction.options.getString("value");
     
         if (!uidValue) {
-            await interaction.reply({ content: "⚠️ Vui lòng nhập UID hợp lệ!", flags: MessageFlags.Ephemeral });
+            await interaction.reply({ content: "⚠️ Please enter a valid UID!", flags: MessageFlags.Ephemeral });
             return;
         }
     
@@ -120,17 +120,17 @@ client.on("interactionCreate", async (interaction) => {
         userProfiles[interaction.user.id].uid = encrypt(uidValue);
         saveUserData(userProfiles);
     
-        await interaction.reply({ content: "✅ UID đã được lưu!", flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: "✅ UID saved!", flags: MessageFlags.Ephemeral });
     }
 
     if (commandName === "checkin") {
         const userId = interaction.user.id;
         if (!userProfiles[userId] || !userProfiles[userId].token || !userProfiles[userId].uid) {
-            await interaction.reply({ content: "⚠️ Bạn cần thiết lập token và UID trước!", flags: MessageFlags.Ephemeral });
+            await interaction.reply({ content: "⚠️ You need to set the token and UID first!", flags: MessageFlags.Ephemeral });
             return;
         }
 
-        await interaction.reply("🔄 Đang thực hiện auto check-in...");
+        await interaction.reply("🔄 Auto check-in...");
         const responseMessages = await autoCheckIn(userId);
         await interaction.editReply(responseMessages);
     }
@@ -138,7 +138,7 @@ client.on("interactionCreate", async (interaction) => {
 
 async function autoCheckIn(userId) {
     if (!userProfiles[userId] || !userProfiles[userId].token || !userProfiles[userId].uid) {
-        return `⚠️ <@${userId}>, bạn chưa thiết lập token hoặc UID!`;
+        return `⚠️ <@${userId}>, You have not set up tokens or UID!`;
     }
 
     let token = decrypt(userProfiles[userId].token);
@@ -147,7 +147,7 @@ async function autoCheckIn(userId) {
     // console.log("Decrypted UID:", uid);
 
     if (!token || !uid) {
-        return `❌ Lỗi khi giải mã token/UID. Hãy thiết lập lại bằng /settoken và /setuid.`;
+        return `❌ Error when decoding tokens/UID. Please reset by /settoken and /setuid.`;
     }
 
     const headers = {
@@ -159,7 +159,7 @@ async function autoCheckIn(userId) {
         Origin: "https://act.hoyolab.com"
     };
 
-    let responseText = `📌 **Check-in kết quả cho <@${userId}>:**`;
+    let responseText = `📌 **Check-in results for <@${userId}>:**`;
 
     for (const [game, url] of Object.entries(urlDict)) {
         try {
@@ -169,8 +169,8 @@ async function autoCheckIn(userId) {
             const result = res.data.message;
             responseText += `\n${result === "OK" ? "✅" : "❌"} **${game}**: ${result}`;
         } catch (error) {
-            // console.error("Lỗi API:", error);
-            responseText += `\n⚠️ **${game}**: Không thể thực hiện check-in.`;
+            // console.error("Error API:", error);
+            responseText += `\n⚠️ **${game}**: Can not perform check-in.`;
         }
     }
 
