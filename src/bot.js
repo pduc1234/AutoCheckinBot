@@ -163,8 +163,7 @@ client.on("interactionCreate", async (interaction) => {
             saveAutoCheckinData();
     
             await interaction.reply({
-                content: `✅ Auto mode is **${enabled ? "ON" : "OFF"}**.\n🎮 Game check-in: ${selectedGames.length > 0 ? selectedGames.join(", ") : "No changed"}`,
-                flags: MessageFlags.Ephemeral,
+                content: `✅ Auto mode is **${enabled ? "ON" : "OFF"}**.\n🎮 Game check-in: ${selectedGames.length > 0 ? selectedGames.join(", ") : "No changed"}`
             });
         }
 
@@ -204,7 +203,7 @@ client.on("interactionCreate", async (interaction) => {
                     .setStyle(ButtonStyle.Success)
             );
 
-            await interaction.reply({ embeds: [embed], components: [row], flags: MessageFlags.Ephemeral });
+            await interaction.reply({ embeds: [embed], components: [row] });
         }
     }
     // Button event handle
