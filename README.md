@@ -1,29 +1,32 @@
 # AutoCheckinBot
 
-AutoCheckinBot works on Discord.
-Help you checkin daily on Hoyolab with Slash commands.
+AutoCheckinBot works on Discord and helps you check in daily on Hoyolab using Slash commands.
 
-#How to use
+## How to Use
 
-1. Open Discord Developer Portal: [Discord Developer Portal](https://discord.com/developers/)
-2. Create a Bot
-3. Set Bot Permissions as Admin
-4. Invite your Bot to your Discord Channel
-5. Set your `token` and `uid`
-    - Google Chrome: Open Developer Tools (F12 or Ctrl+shift+I)
-    - Go to `Application` tab.
-    - Go to `Cookies` (double click)
-    - Click `"https://act.hoyolab.com"`
-    - From the list get `ltoken_v2` and `ltuid_v2` (double click + copy-paste)
-      and set up with commands
-       - `/settoken` to set your token
-       - `/setuid` to set your uid
-6. And Done.
-Now you just use `/checkin` and Bot will check-in for you.
+1. Open the [Discord Developer Portal](https://discord.com/developers/).
+2. Create a bot.
+3. Set the bot's permissions to Admin.
+4. Invite your bot to your Discord server.
+5. Set your `token` and `uid`:
+    - Open **Google Chrome** and launch Developer Tools (F12 or **Ctrl + Shift + I**).
+    - Go to the **Application** tab.
+    - Navigate to **Cookies** (double-click to expand).
+    - Click on `"https://act.hoyolab.com"`.
+    - From the list, find `ltoken_v2` and `ltuid_v2` (double-click to copy-paste).
+    - Set them up using the following commands:
+      - `/settoken` to set your token.
+      - `/setuid` to set your UID.
+6. That's it!  
+   Now, simply use `/checkin`, and the bot will check in for you.
 
 ## FAQ
-1. Q: Is it bannable?
-- A: No, I've been using this for years.
 
-2. Q: It doesn't work anymore?
-- A: If you changed your password, `ltoken` will changed too, so get a new one.
+### 1. Is it bannable?  
+**No, I've been using this for years without any issues.**
+
+### 2. It doesn't work anymore?  
+If you've changed your password, your `ltoken` has changed as well. Retrieve a new one and update it.
+
+### 3. This setup seems complicated?  
+It's easy! You can invite my bot and start using it right away.
