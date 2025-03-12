@@ -16,8 +16,8 @@ Help you checkin daily on Hoyolab with Slash commands.
     - Click `"https://act.hoyolab.com"`
     - From the list get `ltoken_v2` and `ltuid_v2` (double click + copy-paste)
       and set up with commands
-      `/settoken` to set your token
-      `/setuid` to set your uid
+       - `/settoken` to set your token
+       - `/setuid` to set your uid
 6. And Done.
 Now you just use `/checkin` and Bot will check-in for you.
 
