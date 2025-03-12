@@ -29,4 +29,4 @@ AutoCheckinBot works on Discord and helps you check in daily on Hoyolab using Sl
 If you've changed your password, your `ltoken` has changed as well. Retrieve a new one and update it.
 
 ### 3. This setup seems complicated?  
-It's easy! You can invite my bot and start using it right away.
+It's easy! You can invite my bot and start using it right away. [Invite here](https://discord.com/oauth2/authorize?client_id=1343529159925829693)
