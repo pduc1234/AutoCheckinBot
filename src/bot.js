@@ -6,6 +6,10 @@ const {
     SlashCommandBuilder,
     REST,
     MessageFlags,
+    EmbedBuilder, 
+    ActionRowBuilder, 
+    ButtonBuilder, 
+    ButtonStyle,
     Routes,
 } = require("discord.js");
 const axios = require("axios");
@@ -68,6 +72,18 @@ function decrypt(encrypted) {
     }
 }
 
+// Load data from auto check-in
+let autoCheckinData = {};
+if (fs.existsSync(autoCheckinFile)) {
+    autoCheckinData = JSON.parse(fs.readFileSync(autoCheckinFile, "utf-8"));
+}
+
+// Save data from auto check-in
+function saveAutoCheckinData() {
+    fs.writeFileSync(autoCheckinFile, JSON.stringify(autoCheckinData, null, 2));
+}
+
+// Load data from user data
 function loadUserData() {
     if (fs.existsSync(DATA_FILE)) {
         return JSON.parse(fs.readFileSync(DATA_FILE));
@@ -75,6 +91,7 @@ function loadUserData() {
     return {};
 }
 
+// Save data from user data
 function saveUserData(data) {
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 }
@@ -86,53 +103,145 @@ client.on("ready", () => {
 });
 
 client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
+    if (!interaction.isCommand() && !interaction.isButton()) return;
     const { commandName } = interaction;
+    const userId = interaction.user.id;
+    //console.log(`[DEBUG] Interactions from user: ${interaction.user.id}, type: ${interaction.type}`);
 
-    if (commandName === "hello") {
-        await interaction.reply({ content: `Hello, ${interaction.user.username}! 👋`, flags: MessageFlags.Ephemeral });
-    }
+    if (interaction.isCommand()){
+        const { commandName } = interaction;
 
-    if (commandName === "settoken") {
-        const tokenValue = interaction.options.getString("value");
+        if (commandName === "hello") {
+            await interaction.reply({ content: `Hello! 👋`, flags: MessageFlags.Ephemeral });
+        }
+
+        if (commandName === "settoken") {
+            const tokenValue = interaction.options.getString("value");
+        
+            if (!tokenValue) {
+                await interaction.reply({ content: "⚠️ Please enter a valid token!", flags: MessageFlags.Ephemeral });
+                return;
+            }
+        
+            userProfiles[interaction.user.id] = userProfiles[interaction.user.id] || {};
+            userProfiles[interaction.user.id].token = encrypt(tokenValue);
+            saveUserData(userProfiles);
+        
+            await interaction.reply({ content: "✅ Token saved!", flags: MessageFlags.Ephemeral });
+        }
+
+        if (commandName === "setuid") {
+            const uidValue = interaction.options.getString("value");
+        
+            if (!uidValue) {
+                await interaction.reply({ content: "⚠️ Please enter a valid UID!", flags: MessageFlags.Ephemeral });
+                return;
+            }
+        
+            userProfiles[interaction.user.id] = userProfiles[interaction.user.id] || {};
+            userProfiles[interaction.user.id].uid = encrypt(uidValue);
+            saveUserData(userProfiles);
+        
+            await interaction.reply({ content: "✅ UID saved!", flags: MessageFlags.Ephemeral });
+        }
+        if (commandName === "autocheckin") {
+            const userId = interaction.user.id;
+            const enabled = interaction.options.getBoolean("enable");
+            const selectedGames = interaction.options.getString("games")?.split(",").map(game => game.trim()) || [];
     
-        if (!tokenValue) {
-            await interaction.reply({ content: "⚠️ Please enter a valid token!", flags: MessageFlags.Ephemeral });
+            // If there is no user in data, create new
+            if (!autoCheckinData[userId]) {
+                autoCheckinData[userId] = { enabled: false, games: [] };
+            }
+    
+            // Update Auto Check-in status
+            autoCheckinData[userId].enabled = enabled;
+            if (selectedGames.length > 0) {
+                autoCheckinData[userId].games = selectedGames;
+            }
+    
+            saveAutoCheckinData();
+    
+            await interaction.reply({
+                content: `✅ Auto mode is **${enabled ? "ON" : "OFF"}**.\n🎮 Game check-in: ${selectedGames.length > 0 ? selectedGames.join(", ") : "No changed"}`,
+                flags: MessageFlags.Ephemeral,
+            });
+        }
+
+        if (commandName === "checkin") {
+            const userId = interaction.user.id;
+            // console.log(`[DEBUG] Interaction checkin from user: ${userId}`);
+
+            if (!userProfiles[userId] || !userProfiles[userId].token || !userProfiles[userId].uid) {
+                // console.log(`[DEBUG] Lack of tokens or UID for user: ${userId}`);
+                await interaction.reply({ content: "⚠️  You need to set the token and UID first!", flags: MessageFlags.Ephemeral });
+                return;
+            }
+
+            // Send Embed
+            const embed = new EmbedBuilder()
+                .setColor("#0099ff")
+                .setTitle("🎮 Choose Game to Check-in!")
+                .setDescription("Click the button below to select the game you want to check-in.")
+                .setTimestamp();
+
+            // Create Button
+            const row = new ActionRowBuilder();
+            Object.keys(urlDict).forEach((game) => {
+                // console.log(`[DEBUG] Create Button: ${game}`);
+                row.addComponents(
+                    new ButtonBuilder()
+                        .setCustomId(`checkin_${game}_${userId}`)
+                        .setLabel(game.replace("_", " "))
+                        .setStyle(ButtonStyle.Primary)
+                );
+            });
+
+            row.addComponents(
+                new ButtonBuilder()
+                    .setCustomId(`checkin_all_${userId}`)
+                    .setLabel("All Game")
+                    .setStyle(ButtonStyle.Success)
+            );
+
+            await interaction.reply({ embeds: [embed], components: [row], flags: MessageFlags.Ephemeral });
+        }
+    }
+    // Button event handle
+    else if (interaction.isButton()) {
+        // console.log(`[DEBUG] Buttons clicked by the user.: ${interaction.user.id}, customId: ${interaction.customId}`);
+
+        const customId = interaction.customId;
+        if (!customId.startsWith("checkin_")) return;
+
+        const lastUnderscoreIndex = customId.lastIndexOf("_");
+        if (lastUnderscoreIndex === -1) {
+            console.log(`[ERROR] Customid incorrect format: ${customId}`);
             return;
         }
-    
-        userProfiles[interaction.user.id] = userProfiles[interaction.user.id] || {};
-        userProfiles[interaction.user.id].token = encrypt(tokenValue);
-        saveUserData(userProfiles);
-    
-        await interaction.reply({ content: "✅ Token saved!", flags: MessageFlags.Ephemeral });
-    }
-
-    if (commandName === "setuid") {
-        const uidValue = interaction.options.getString("value");
-    
-        if (!uidValue) {
-            await interaction.reply({ content: "⚠️ Please enter a valid UID!", flags: MessageFlags.Ephemeral });
-            return;
-        }
-    
-        userProfiles[interaction.user.id] = userProfiles[interaction.user.id] || {};
-        userProfiles[interaction.user.id].uid = encrypt(uidValue);
-        saveUserData(userProfiles);
-    
-        await interaction.reply({ content: "✅ UID saved!", flags: MessageFlags.Ephemeral });
-    }
-
-    if (commandName === "checkin") {
+        const game = customId.substring(8, lastUnderscoreIndex); // Remove "checkin_" (first 8 characters)
+        const userIdFromButton = customId.substring(lastUnderscoreIndex + 1);
         const userId = interaction.user.id;
-        if (!userProfiles[userId] || !userProfiles[userId].token || !userProfiles[userId].uid) {
-            await interaction.reply({ content: "⚠️ You need to set the token and UID first!", flags: MessageFlags.Ephemeral });
+
+        if (userId !== userIdFromButton) {
+            // console.log(`[DEBUG] User ${userId} does not match the user in the node: ${userIdFromButton}`);
+            await interaction.reply({ content: "⚠️ You cannot press this button!", flags: MessageFlags.Ephemeral });
             return;
         }
 
-        await interaction.reply("🔄 Auto check-in...");
-        const responseMessages = await autoCheckIn(userId);
-        await interaction.editReply(responseMessages);
+        const gameName = game === "all" ? "All Game" : game.replace("_", " ");
+        // console.log(`[DEBUG] Start check-in for: ${gameName}`);
+
+        await interaction.reply(`🔄 Auto check-in... **${gameName}**...`);
+
+        try {
+            const responseMessage = await autoCheckIn(userId, game === "all" ? null : game);
+            // console.log(`[DEBUG] Check-in results: ${responseMessage}`);
+            await interaction.editReply(responseMessage);
+        } catch (error) {
+            console.error(`[ERROR] Check-in Error:`, error);
+            await interaction.editReply("❌ Something went wrong while checking in.");
+        }
     }
 });
 
@@ -143,8 +252,8 @@ async function autoCheckIn(userId) {
 
     let token = decrypt(userProfiles[userId].token);
     let uid = decrypt(userProfiles[userId].uid);
-    // console.log("Decrypted Token:", token);
-    // console.log("Decrypted UID:", uid);
+    // console.log("[DEBUG] Decrypted Token:", token);
+    // console.log("[DEBUG] Decrypted UID:", uid);
 
     if (!token || !uid) {
         return `❌ Error when decoding tokens/UID. Please reset by /settoken and /setuid.`;
@@ -161,20 +270,40 @@ async function autoCheckIn(userId) {
 
     let responseText = `📌 **Check-in results for <@${userId}>:**`;
 
-    for (const [game, url] of Object.entries(urlDict)) {
-        try {
-            headers["x-rpc-signgame"] = game.toLowerCase();
-            const res = await axios.post(url, {}, { headers });
-            // console.log("API Response:", res.data);
-            const result = res.data.message;
-            responseText += `\n${result === "OK" ? "✅" : "❌"} **${game}**: ${result}`;
-        } catch (error) {
-            // console.error("Error API:", error);
-            responseText += `\n⚠️ **${game}**: Can not perform check-in.`;
+    if (game) {
+        if (!urlDict[game]) {
+            return `⚠️ Game **${game}** invalid!`;
+        }
+        return await checkInGame(userId, game, headers);
+    } else {
+        for (const [gameKey, url] of Object.entries(urlDict)) {
+            responseText += `\n${await checkInGame(userId, gameKey, headers)}`;
         }
     }
 
     return responseText;
 }
+
+async function checkInGame(userId, game, headers) {
+    try {
+        headers["x-rpc-signgame"] = game.toLowerCase();
+        const res = await axios.post(urlDict[game], {}, { headers });
+        return `${res.data.message === "OK" ? "✅" : "❌"} **${game}**: ${res.data.message}`;
+    } catch (error) {
+        return `⚠️ **${game}**: Cannot check-in.`;
+    }
+}
+
+// Auto check-in every day at 12PM
+cron.schedule("0 12 * * *", async () => {
+    console.log("🔄 Auto check-in...");
+    for (const userId in userProfiles) {
+        if (userProfiles[userId].autoCheckIn?.active) {
+            const game = userProfiles[userId].autoCheckIn.game;
+            const result = await autoCheckIn(userId, game);
+            client.users.fetch(userId).then(user => user.send(result)).catch(() => {});
+        }
+    }
+}, { timezone: "Asia/Ho_Chi_Minh" });
 
 client.login(process.env.TOKEN);
