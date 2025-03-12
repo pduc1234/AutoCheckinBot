@@ -23,8 +23,8 @@ Now you just use `/checkin` and Bot will check-in for you.
 
 ## FAQ
 
-Q: Is it bannable?
-A: No, I've been using this for years.
+- Q: Is it bannable?
+- A: No, I've been using this for years.
 
-Q: It doesn't work anymore?
-A: If you changed your password, `ltoken` will changed too, so get a new one.
+- Q: It doesn't work anymore?
+- A: If you changed your password, `ltoken` will changed too, so get a new one.
