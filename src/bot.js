@@ -63,7 +63,7 @@ function decrypt(encrypted) {
 
         return decrypted;
     } catch (err) {
-        console.error("❌ Lỗi giải mã:", err.message);
+        console.error("❌ Decrypt Error:", err.message);
         return null;
     }
 }
