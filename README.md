@@ -22,9 +22,10 @@ Help you checkin daily on Hoyolab with Slash commands.
 Now you just use `/checkin` and Bot will check-in for you.
 
 ## FAQ
-
+1.
 - Q: Is it bannable?
 - A: No, I've been using this for years.
 
+2.
 - Q: It doesn't work anymore?
 - A: If you changed your password, `ltoken` will changed too, so get a new one.
