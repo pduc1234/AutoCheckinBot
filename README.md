@@ -2,6 +2,7 @@
 
 AutoCheckinBot works on Discord and helps you check in daily on Hoyolab using Slash commands.
 
+
 ## How to Use
 
 1. Open the [Discord Developer Portal](https://discord.com/developers/).
@@ -19,10 +20,13 @@ AutoCheckinBot works on Discord and helps you check in daily on Hoyolab using Sl
       - `/setuid` to set your UID.
 6. That's it!  
    Now, simply use `/checkin`, and the bot will check in for you.
+   
 
 ## Announcement
 **New Version Released**
+
 In the latest version, I have fixed some minor errors and made the code easier to understand.
+
 
 ## FAQ
 
