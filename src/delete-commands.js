@@ -5,23 +5,23 @@ const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 
 (async () => {
     try {
-        console.log("🗑 Deleting the slash...");
+        console.log("🗑 Đang xóa tất cả lệnh slash...");
 
-        // Get a list of existing commands
+        // Lấy danh sách các lệnh hiện có
         const commands = await rest.get(Routes.applicationCommands(process.env.CLIENT_ID));
 
         if (commands.length === 0) {
-            console.log("✅ There are no commands to delete!");
+            console.log("✅ Không có lệnh nào để xóa!");
             return;
         }
 
         for (const command of commands) {
             await rest.delete(Routes.applicationCommand(process.env.CLIENT_ID, command.id));
-            console.log(`🗑 Deleted: ${command.name}`);
+            console.log(`🗑 Đã xóa lệnh: ${command.name}`);
         }
 
-        console.log("✅ Deleteed all Slash commands successfully!");
+        console.log("✅ Đã xóa tất cả lệnh slash thành công!");
     } catch (error) {
-        console.error("❌ Error when delete Slash:", error);
+        console.error("❌ Lỗi khi xóa lệnh:", error);
     }
 })();
