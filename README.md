@@ -4,9 +4,9 @@ AutoCheckinBot works on Discord and helps you check in daily on Hoyolab using Sl
 
 
 ## Table of Contents
-- [How to Use](https://github.com/pduc1234/AutoCheckinBot/edit/main/README.md#how-to-use)
-- [Announcement](https://github.com/pduc1234/AutoCheckinBot/edit/main/README.md#announcement)
-- [FAQ](https://github.com/pduc1234/AutoCheckinBot/edit/main/README.md#announcement)
+- [How to Use](https://github.com/pduc1234/AutoCheckinBot?tab=readme-ov-file#how-to-use)
+- [Announcement](https://github.com/pduc1234/AutoCheckinBot?tab=readme-ov-file#announcement)
+- [FAQ](https://github.com/pduc1234/AutoCheckinBot?tab=readme-ov-file#faq)
 - [Invite Bot](https://discord.com/oauth2/authorize?client_id=1343529159925829693)
 
 ## How to Use
