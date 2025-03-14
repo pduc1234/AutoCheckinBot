@@ -30,3 +30,7 @@ If you've changed your password, your `ltoken` has changed as well. Retrieve a n
 
 ### 3. This setup seems complicated?  
 It's easy! You can invite my bot and start using it right away. [Invite here](https://discord.com/oauth2/authorize?client_id=1343529159925829693)
+
+## Announcement
+**New Version Released**
+In the latest version, I have fixed some minor errors and made the code easier to understand.
