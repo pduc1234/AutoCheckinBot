@@ -10,13 +10,13 @@ const handleWork = async (interaction) => {
         Date.now() - cooldowns.get(`work_${userId}`) < 600000
     ) {
         return interaction.reply(
-            "❌ Bạn phải chờ 10 phút trước khi làm việc tiếp!",
+            "❌ You have to wait 10 minutes before continuing!",
         );
     }
     economy[userId] = (economy[userId] || 0) + 500;
     cooldowns.set(`work_${userId}`, Date.now());
     saveEconomy(economy);
-    return interaction.reply("💼 Bạn đã làm việc và nhận được 500 <:parallel_coin:1350066344632123462>!");
+    return interaction.reply("💼 You worked and received 500 <:parallel_coin:1350066344632123462>!");
 };
 
 module.exports = {
