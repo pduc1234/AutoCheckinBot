@@ -7,14 +7,14 @@ const handleCheckinCommand = async(interaction, userProfiles) => {
 
     // Kiểm tra nếu userProfiles[userId] không tồn tại hoặc thiếu token/uid
     if (!userProfiles[userId] || !userProfiles[userId].token || !userProfiles[userId].uid) {
-        await interaction.reply({ content: "⚠️ Bạn cần thiết lập token và UID trước!", flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: "⚠️ You need to set up token and UID first!", flags: MessageFlags.Ephemeral });
         return;
     }
 
     const embed = new EmbedBuilder()
         .setColor("#0099ff")
-        .setTitle("🎮 Chọn game để Check-in!")
-        .setDescription("Nhấn vào nút bên dưới để chọn game bạn muốn check-in.")
+        .setTitle("🎮 Choose a game to Check-in!")
+        .setDescription("Click the button below to select the game you want to check-in.")
         .setTimestamp();
 
     const row = new ActionRowBuilder();
@@ -30,7 +30,7 @@ const handleCheckinCommand = async(interaction, userProfiles) => {
     row.addComponents(
         new ButtonBuilder()
             .setCustomId(`checkin_all_${userId}`)
-            .setLabel("Tất cả Game")
+            .setLabel("All Games")
             .setStyle(ButtonStyle.Success)
     );
 
@@ -49,19 +49,19 @@ const handleCheckinButton = async(interaction, userProfiles) => {
     const userId = interaction.user.id;
 
     if (userId !== userIdFromButton) {
-        await interaction.reply({ content: "⚠️ Bạn không thể bấm nút này!", flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: "⚠️ You can't press this button!", flags: MessageFlags.Ephemeral });
         return;
     }
 
-    const gameName = game === "all" ? "tất cả game" : game.replace("_", " ");
-    await interaction.reply(`🔄 Đang thực hiện check-in cho **${gameName}**...`);
+    const gameName = game === "all" ? "all games" : game.replace("_", " ");
+    await interaction.reply(`🔄 Checking-in for **${gameName}**...`);
 
     try {
         const responseMessage = await autoCheckIn(userId, game === "all" ? null : game, userProfiles);
         await interaction.editReply(responseMessage);
     } catch (error) {
-        console.error(`📌[ERROR] Lỗi khi check-in:`, error);
-        await interaction.editReply("❌ Đã xảy ra lỗi khi check-in.");
+        console.error(`📌[ERROR] Error when check-in:`, error);
+        await interaction.editReply("❌ There was an error when checking in.");
     }
 }
 
