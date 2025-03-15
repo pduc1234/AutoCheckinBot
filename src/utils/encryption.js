@@ -32,7 +32,7 @@ function decrypt(encrypted) {
 
         return decrypted;
     } catch (err) {
-        console.error("❌ Decrypting error:", err.message);
+        console.error("❌[ERROR] Decrypting error:", err.message);
         return null;
     }
 }
