@@ -69,7 +69,7 @@ const handleDice = async (interaction) => {
             .addFields(
                 { name: "💰 Bet", value: `${bet} <:parallel_coin:1350066344632123462>`, inline: true },
                 { name: "📊 Result", value: isWin ? "🎉 **You win!** 🤑" : "💸 **You lose!** 😢", inline: true },
-                { name: "<a:coinloop:1350066419710038098> Tiền nhận", value: isWin ? `${winnings} <:parallel_coin:1350066344632123462>` : "0 <:parallel_coin:1350066344632123462>", inline: true }
+                { name: "<a:coinloop:1350066419710038098> Money received", value: isWin ? `${winnings} <:parallel_coin:1350066344632123462>` : "0 <:parallel_coin:1350066344632123462>", inline: true }
             );
     
             await interaction.editReply({ embeds: [finalEmbed], components: [] });
