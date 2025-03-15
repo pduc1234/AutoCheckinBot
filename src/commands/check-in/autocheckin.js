@@ -6,7 +6,7 @@ const userProfiles = loadUserData();
 const autoCheckinData = loadAutoCheckinData();
 
 const handleAutoCheckinCommand = async (interaction) => {
-    // console.log("📢[DEBUG] Lệnh /autocheckin đã được gọi!");
+    // console.log("📢[DEBUG] The /autocheckin command has been called!");
     const userId = interaction.user.id;
     const mode = interaction.options.getString("mode");
     const enabled = mode === "on";
@@ -22,24 +22,24 @@ const handleAutoCheckinCommand = async (interaction) => {
     }
 
     saveAutoCheckinData(autoCheckinData);
-    // console.log("📢[DEBUG] Dữ liệu đang lưu:", autoCheckinData);
+    // console.log("📢[DEBUG] Data is being saved:", autoCheckinData);
 
     await interaction.reply({
-        content: `✅ Chế độ auto check-in đã được **${enabled ? "BẬT" : "TẮT"}**.\n🎮 Game check-in: **${selectedGames.length > 0 ? selectedGames.join(", ") : "Không thay đổi"}**`,
+        content: `✅ Auto check-in mode has been **${enabled ? "ON" : "OFF"}**.\n🎮 Game check-in: **${selectedGames.length > 0 ? selectedGames.join(", ") : "No change"}**`,
         flags: 64,
     });
 };
 
-// Hàm auto check-in
+// Auto check-in function
 const autoCheckIn = async (userId, game) => {
-    console.log(`✅ User ${userId} đã auto check-in vào game ${game}!`);
-    return `✅ User ${userId} đã auto check-in vào game ${game}!`;
+    console.log(`✅ User ${userId} has auto checked-in into the game ${game}!`);
+    return `✅ User ${userId} has auto check-in to game ${game}!`;
 };
 
-// Chạy auto check-in mỗi ngày lúc 10AM
+// Run auto check-in every day at 10AM
 module.exports = (client) => {
     cron.schedule("0 10 * * *", async () => {
-        console.log("🔄 Đang thực hiện auto check-in...");
+        console.log("🔄 Doing auto check-in...");
         for (const id in userProfiles) {
             if (userProfiles[id].autoCheckIn?.active) {
                 const game = userProfiles[id].autoCheckIn.game;
