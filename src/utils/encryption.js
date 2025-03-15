@@ -5,7 +5,7 @@ function getKeyFromSecret(secret) {
     return crypto.createHash("sha256").update(secret).digest();
 }
 
-// Hàm mã hóa
+// Encryption function
 function encrypt(text) {
     const key = getKeyFromSecret(SECRET_KEY);
     const iv = crypto.randomBytes(16);
@@ -17,7 +17,7 @@ function encrypt(text) {
     return iv.toString('hex') + encrypted; 
 }
 
-// Hàm giải mã
+// Decryption function
 function decrypt(encrypted) {
     if (!encrypted) return null;
 
@@ -32,7 +32,7 @@ function decrypt(encrypted) {
 
         return decrypted;
     } catch (err) {
-        console.error("❌ Lỗi giải mã:", err.message);
+        console.error("❌ Decrypting error:", err.message);
         return null;
     }
 }
