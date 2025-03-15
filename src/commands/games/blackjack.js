@@ -10,7 +10,7 @@ const handleBlackjack = async (interaction) => {
 
     if (games.has(userId)) {
         return await interaction.reply({
-            content: "❌ Bạn đang chơi Blackjack! Hãy hoàn thành ván bài trước.",
+            content: "❌ You are playing Blackjack! Let's finish the first hand.",
             flags: MessageFlags.Ephemeral,
         });
     }
@@ -18,12 +18,12 @@ const handleBlackjack = async (interaction) => {
     let bet = interaction.options.getInteger("bet") || 1000;
 
     if (!economy[userId]) {
-        economy[userId] = 0; // Khởi tạo số dư nếu chưa có
+        economy[userId] = 0; // Initialize the balance if there is not already
     }
 
     if (economy[userId] < bet) {
         return await interaction.reply({
-            content: "❌ Bạn không đủ tiền để chơi Blackjack! Hãy làm việc để kiếm thêm tiền.",
+            content: "❌ You don't have enough money to play Blackjack! Let's work to earn more money.",
             flags: MessageFlags.Ephemeral,
         });
     }
@@ -34,7 +34,7 @@ const handleBlackjack = async (interaction) => {
     let deck = createDeck();
     if (deck.length < 4) {
         return await interaction.reply({
-            content: "❌ Không đủ bài trong bộ bài! Hãy thử lại sau.",
+            content: "❌ Not enough cards in the deck! Try again later.",
             flags: MessageFlags.Ephemeral,
         });
     }
@@ -58,9 +58,9 @@ const handleBlackjack = async (interaction) => {
         embeds: [
             {
                 title: "🎰 Blackjack!",
-                description: `💳 **Bài của bạn:** ${playerHand.map((c) => cardEmojis[c]).join(" ")}\n
-                    🃏 **Bot có:** ${cardEmojis[botHand[0]]} ❓\n
-                    💰 **Cược:** ${bet} <:parallel_coin:1350066344632123462>`,
+                description: `💳 **Your hand:** ${playerHand.map((c) => cardEmojis[c]).join(" ")}\n
+                    🃏 **Bot's hand:** ${cardEmojis[botHand[0]]} ❓\n
+                    💰 **Bet:** ${bet} <:parallel_coin:1350066344632123462>`,
                 color: 0x0099ff,
             },
         ],
@@ -75,7 +75,7 @@ const handleBlackjackButton = async (interaction) => {
 
     if (!games.has(userId)) {
         return await interaction.reply({
-            content: "❌ Bạn chưa bắt đầu trò chơi! Dùng `/blackjack` để bắt đầu.",
+            content: "❌ You haven't started the game yet! Use `/blackjack` to start.",
             flags: MessageFlags.Ephemeral,
         });
     }
@@ -84,7 +84,7 @@ const handleBlackjackButton = async (interaction) => {
     if (interaction.customId === "blackjack_hit") {
         if (game.deck.length === 0) {
             return await interaction.reply({
-                content: "❌ Không còn bài trong bộ bài!",
+                content: "❌ There are no more cards in the deck!",
                 flags: MessageFlags.Ephemeral,
             });
         }
@@ -97,8 +97,8 @@ const handleBlackjackButton = async (interaction) => {
             return await interaction.update({
                 embeds: [
                     {
-                        title: "💥 Bạn đã bị quắc (Bust)!",
-                        description: `💳 **Bài của bạn:** ${game.playerHand.map((c) => cardEmojis[c]).join(" ")} (**${playerPoints} điểm**)`,
+                        title: "💥 You have been busted (Bust)!",
+                        description: `💳 **Your hand:** ${game.playerHand.map((c) => cardEmojis[c]).join(" ")} (**${playerPoints} point**)`,
                         color: 0xff0000,
                         footer: {
                             icon_url: "https://cdn.discordapp.com/emojis/1350066344632123462.png",
@@ -115,8 +115,8 @@ const handleBlackjackButton = async (interaction) => {
             embeds: [
                 {
                     title: "🎰 Blackjack!",
-                    description: `💳 **Bài của bạn:** ${game.playerHand.map((c) => cardEmojis[c]).join(" ")} (**${playerPoints} điểm**)\n
-                        🃏 **Bot có:** ${cardEmojis[game.botHand[0]]} ❓`,
+                    description: `💳 **Your hand:** ${game.playerHand.map((c) => cardEmojis[c]).join(" ")} (**${playerPoints} point**)\n
+                        🃏 **Bot's hand:** ${cardEmojis[game.botHand[0]]} ❓`,
                     color: 0x0099ff,
                 },
             ],
@@ -137,13 +137,13 @@ const handleBlackjackButton = async (interaction) => {
         let winnings = 0;
 
         if (botPoints > 21 || playerPoints > botPoints) {
-            result = `🎉 Bạn thắng! +${game.bet * 2}`;
+            result = `🎉 You win! +${game.bet * 2}`;
             winnings = game.bet * 2;
         } else if (botPoints > playerPoints) {
-            result = "😢 Bạn thua!";
+            result = "😢 You lose!";
             winnings = 0;
         } else {
-            result = "⚖ Hòa! Bạn nhận lại số tiền cược.";
+            result = "⚖ Draw! You get the bet back.";
             winnings = game.bet;
         }
 
@@ -163,13 +163,13 @@ const handleBlackjackButton = async (interaction) => {
                 {
                     title:
                         botPoints > 21 || playerPoints > botPoints
-                            ? "🎉 Bạn thắng!"
+                            ? "🎉 You win!"
                             : botPoints > playerPoints
-                              ? "😢 Bạn thua!"
-                              : "⚖ Hòa!",
+                              ? "😢 You lose!"
+                              : "⚖ Draw!",
                     description:
-                        `💳 **Bài của bạn:** ${game.playerHand.map((c) => cardEmojis[c]).join(" ")} (**${playerPoints} điểm**)\n` +
-                        `🃏 **Bài của bot:** ${game.botHand.map((c) => cardEmojis[c]).join(" ")} (**${botPoints} điểm**)`,
+                        `💳 **Your hand:** ${game.playerHand.map((c) => cardEmojis[c]).join(" ")} (**${playerPoints} point**)\n` +
+                        `🃏 **Bot's hand:** ${game.botHand.map((c) => cardEmojis[c]).join(" ")} (**${botPoints} point**)`,
                     color: embedColor,
                     footer: {
                         icon_url: "https://cdn.discordapp.com/emojis/1350066344632123462.png",
