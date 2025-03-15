@@ -1,6 +1,6 @@
 const handleHello = async (interaction) => {
     return interaction.reply(
-        `Xin chào! 👋`,
+        `Hello! 👋`,
     );
 }
 
@@ -10,13 +10,13 @@ const handleHello = async (interaction) => {
 
     if (!targetUser) {
         return interaction.reply({
-            content: "⚠️ Vui lòng chỉ định một người dùng hợp lệ!",
+            content: "⚠️ Please specify a valid user!",
             ephemeral: true,
         });
     }
 
     return interaction.reply(
-        `Gửi lời chào tới <@${targetUser.id}>! 👋`,
+        `Send greetings to <@${targetUser.id}>! 👋`,
     );
 }
 */
