@@ -10,14 +10,14 @@ const handleDaily = async (interaction) => {
         Date.now() - cooldowns.get(userId) < 86400000
     ) {
         return interaction.reply(
-            "❌ Bạn đã nhận tiền thưởng hôm nay, hãy quay lại sau 24 giờ!",
+            "❌ You have received the bonus today, please come back in 24 hours!",
         );
     }
     economy[userId] = (economy[userId] || 0) + 5000;
     cooldowns.set(userId, Date.now());
     saveEconomy(economy);
     return interaction.reply(
-        "🎁 Bạn đã nhận 1000 <:parallel_coin:1350066344632123462> tiền thưởng hàng ngày!",
+        "🎁 You have received 1000 <:parallel_coin:1350066344632123462> daily bonus!",
     );
 };
 
