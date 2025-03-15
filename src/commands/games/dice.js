@@ -10,7 +10,7 @@ const handleDice = async (interaction) => {
 
     if (!economy[userId] || economy[userId] < bet) {
         return interaction.reply(
-            "❌ Bạn không đủ tiền để chơi Dice! Hãy làm việc để kiếm thêm tiền.",
+            "❌ You don't have enough money to play Dice! Let's work to earn more money.",
         );
     }
 
@@ -19,27 +19,27 @@ const handleDice = async (interaction) => {
 
     const embed = new EmbedBuilder()
         .setColor("#0099ff")
-        .setTitle("🎲 Đặt cược xúc xắc!")
-        .setDescription(`💰 **Số tiền cược:** ${bet} <:parallel_coin:1350066344632123462>\n\n➡️ **Chọn Tài hoặc Xỉu**:`);
+        .setTitle("🎲 Bet on dice!")
+        .setDescription(`💰 **Bet amount:** ${bet} <:parallel_coin:1350066344632123462>\n\n➡️ **Choose Big or Small**:`);
     
     const row = new ActionRowBuilder().addComponents(
-        new ButtonBuilder().setCustomId("bet_tai").setLabel("Tài").setStyle(ButtonStyle.Success),
-        new ButtonBuilder().setCustomId("bet_xiu").setLabel("Xỉu").setStyle(ButtonStyle.Danger)
+        new ButtonBuilder().setCustomId("bet_tai").setLabel("Big").setStyle(ButtonStyle.Success),
+        new ButtonBuilder().setCustomId("bet_xiu").setLabel("Small").setStyle(ButtonStyle.Danger)
         );
     
     const message = await interaction.reply({ embeds: [embed], components: [row], flags: MessageFlags.Ephemeral });
     
-    // Bộ lọc chờ phản hồi từ người chơi
+    // Filter waiting for feedback from players
     const filter = (i) => i.user.id === interaction.user.id;
     const collector = message.createMessageComponentCollector({ filter, time: 15000 });
     
     collector.on("collect", async (i) => {
-        const betChoice = i.customId === "bet_tai" ? "Tài" : "Xỉu";
+        const betChoice = i.customId === "bet_tai" ? "Big" : "Small";
     
         let results = "";
         let total = 0;
     
-        // Hiệu ứng tung xúc xắc từng bước
+        // Step-by-step dice throwing effect
         for (let j = 0; j < 3; j++) {
             const diceRoll = Math.floor(Math.random() * 6) + 1;
             total += diceRoll;
@@ -48,27 +48,27 @@ const handleDice = async (interaction) => {
             // Cập nhật từng bước
             const rollingEmbed = new EmbedBuilder()
                 .setColor("#FFD700")
-                .setTitle("🎲 Kết quả tung xúc xắc!")
-                .setDescription(`**Kết quả hiện tại:**\n${results.trim()}`)
-                .setFooter({ text: "Đang tung tiếp...", iconURL: "https://cdn.discordapp.com/emojis/1350014673612836916.png" });
+                .setTitle("🎲 The result of throwing dice!")
+                .setDescription(`**Current results:**\n${results.trim()}`)
+                .setFooter({ text: "Throwing...", iconURL: "https://cdn.discordapp.com/emojis/1350014673612836916.png" });
     
             await interaction.editReply({ embeds: [rollingEmbed], components: [] });
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
     
-        // Xác định kết quả
-        const gameResult = total > 10 ? "Tài" : "Xỉu";
+        // Determine the result
+        const gameResult = total > 10 ? "Big" : "Small";
         const isWin = betChoice === gameResult;
         const winnings = isWin ? bet + Math.floor(bet * 0.9) : 0;
     
-        // Cập nhật kết quả cuối cùng
+        // Update the final result
         const finalEmbed = new EmbedBuilder()
             .setColor(isWin ? "#00FF00" : "#FF0000")
-            .setTitle("🎲 Kết quả tung xúc xắc!")
-            .setDescription(`**Kết quả:**\n${results.trim()}\n\n🔢 **Tổng điểm: ${total}**\n➡️ **${gameResult}**`)
+            .setTitle("🎲 The result of throwing dice!")
+            .setDescription(`**Result:**\n${results.trim()}\n\n🔢 **Total score: ${total}**\n➡️ **${gameResult}**`)
             .addFields(
-                { name: "💰 Tiền cược", value: `${bet} <:parallel_coin:1350066344632123462>`, inline: true },
-                { name: "📊 Kết quả", value: isWin ? "🎉 **Bạn thắng!** 🤑" : "💸 **Bạn thua!** 😢", inline: true },
+                { name: "💰 Bet", value: `${bet} <:parallel_coin:1350066344632123462>`, inline: true },
+                { name: "📊 Result", value: isWin ? "🎉 **You win!** 🤑" : "💸 **You lose!** 😢", inline: true },
                 { name: "<a:coinloop:1350066419710038098> Tiền nhận", value: isWin ? `${winnings} <:parallel_coin:1350066344632123462>` : "0 <:parallel_coin:1350066344632123462>", inline: true }
             );
     
@@ -77,7 +77,7 @@ const handleDice = async (interaction) => {
     
         collector.on("end", async (collected) => {
             if (collected.size === 0) {
-                await interaction.editReply({ content: "⏳ **Bạn không chọn trong thời gian quy định!**", components: [] });
+                await interaction.editReply({ content: "⏳ **You don't choose within the specified time!**", components: [] });
             }
         });
 };
