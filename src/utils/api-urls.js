@@ -14,7 +14,7 @@ const urlDict = {
 
 async function autoCheckIn(userId, game = null) {
     if (!userProfiles[userId] || !userProfiles[userId].token || !userProfiles[userId].uid) {
-        return `⚠️ <@${userId}>, bạn chưa thiết lập token hoặc UID!`;
+        return `⚠️ <@${userId}>, you have not set up token or UID!`;
     }
 
     let token = decrypt(userProfiles[userId].token);
@@ -23,7 +23,7 @@ async function autoCheckIn(userId, game = null) {
     // console.log("📢[DEBUG] Decrypted UID:", uid);
 
     if (!token || !uid) {
-        return `❌ Lỗi khi giải mã token/UID. Hãy thiết lập lại bằng /settoken và /setuid.`;
+        return `❌ Error when decrypting token/UID. Please reset with /settoken and /setuid.`;
     }
 
     const headers = {
@@ -37,11 +37,11 @@ async function autoCheckIn(userId, game = null) {
 
     if (game) {
         if (!urlDict[game]) {
-            return `⚠️ Game **${game}** không hợp lệ!`;
+            return `⚠️ Game **${game}** invalid!`;
         }
         return await checkInGame(userId, game, headers);
     } else {
-        let responseText = `📌 **Kết quả check-in cho <@${userId}>:**`;
+        let responseText = `📌 **Check-in results for <@${userId}>:**`;
         for (const gameKey of Object.keys(urlDict)) {
             responseText += `\n${await checkInGame(userId, gameKey, headers)}`;
         }
@@ -55,13 +55,13 @@ async function checkInGame(userId, game, headers) {
         const res = await axios.post(urlDict[game], {}, { headers });
         return `${res.data.message === "OK" ? "✅" : "❌"} **${game}**: ${res.data.message}`;
     } catch (error) {
-        return `⚠️ **${game}**: Không thể thực hiện check-in.`;
+        return `⚠️ **${game}**: Unable to check-in.`;
     }
 }
 
-// Lên lịch auto check-in mỗi ngày lúc 12h trưa
-cron.schedule("0 12 * * *", async () => {
-    console.log("🔄 Đang chạy auto check-in...");
+// Schedule auto check-in every day at 10AM
+cron.schedule("0 10 * * *", async () => {
+    console.log("🔄 Auto checking-in...");
     for (const userId in userProfiles) {
         if (userProfiles[userId].autoCheckIn?.active) {
             const game = userProfiles[userId].autoCheckIn.game;
@@ -69,6 +69,6 @@ cron.schedule("0 12 * * *", async () => {
             client.users.fetch(userId).then(user => user.send(result)).catch(() => {});
         }
     }
-}, { timezone: "Asia/Ho_Chi_Minh" });
+}, { timezone: "Asia/Singapore" });
 
 module.exports = { autoCheckIn, urlDict };
