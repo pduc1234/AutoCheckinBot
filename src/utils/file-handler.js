@@ -10,7 +10,7 @@ function loadUserData() {
 
 function saveUserData(data) {
     if (!data) {
-        console.error("❌ Không thể lưu vì data không hợp lệ:", data);
+        console.error("❌[ERROR] Unable to save because the data is invalid:", data);
         return;
     }
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
@@ -25,7 +25,7 @@ function loadAutoCheckinData() {
 
 function saveAutoCheckinData(data) {
     if (!data) {
-        console.error("❌ Không thể lưu vì data không hợp lệ:", data);
+        console.error("❌[ERROR] Unable to save because the data is invalid:", data);
         return;
     }
     fs.writeFileSync(AUTO_CHECKIN_FILE, JSON.stringify(data, null, 2));
@@ -40,7 +40,7 @@ function loadEconomy() {
 
 function saveEconomy(data) {
     if (!data) {
-        console.error("❌ Không thể lưu vì data không hợp lệ:", data);
+        console.error("❌[ERROR] Unable to save because the data is invalid:", data);
         return;
     }
     fs.writeFileSync(ECONOMY_FILE, JSON.stringify(data, null, 2));
