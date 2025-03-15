@@ -3,10 +3,10 @@ const { encrypt } = require("../../utils/encryption");
 const { loadUserData, saveUserData } = require("../../utils/file-handler");
 
 const handleSettoken = async (interaction) => {
-    // console.log("📢 Lệnh /settoken đã được gọi!");
+    // console.log("📢 The /settoken command has been called!");
     const tokenValue = interaction.options.getString("value");
     if (!tokenValue) {
-        await interaction.reply({ content: "⚠️ Vui lòng nhập token hợp lệ!", flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: "⚠️ Please enter a valid token!", flags: MessageFlags.Ephemeral });
         return;
     }
 
@@ -14,7 +14,7 @@ const handleSettoken = async (interaction) => {
     userProfiles[interaction.user.id] = userProfiles[interaction.user.id] || {};
     userProfiles[interaction.user.id].token = encrypt(tokenValue);
     saveUserData(userProfiles);
-    await interaction.reply({ content: "✅ Token đã được lưu!", flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: "✅ Token has been saved!", flags: MessageFlags.Ephemeral });
 
 }
 
